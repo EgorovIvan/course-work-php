@@ -1,0 +1,17 @@
+{
+    "name": "ivan-egorov/course-work-php",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "EgorovIvan",
+            "email": "sportsmenq@mail.ru"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.21"
+    }
+}
