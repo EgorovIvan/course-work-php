@@ -11,13 +11,17 @@ echo $faker->name();
 echo $faker->email();
 echo $faker->text();
 
-$user = new User(1, 'Mark', 'Zuckerberg');
+$user = new User(
+    $faker->randomDigitNotNull(),
+    $faker->firstName(),
+    $faker->lastName()
+);
 
-$post = new Post(1, $user, 'The Social Network',
-    'A movie based on Zuckerberg and the founding years of Facebook, The Social Network was released on October 1, 2010');
+$post = new Post($faker->randomDigitNotNull(), $user, 'The Social Network',
+    $faker->text);
 
-$comment = new Comment(1, $user, $post,
-    'You turned out to be a great entrepreneur, a visionary, and an incredible altruist');
+$comment = new Comment($faker->randomDigitNotNull(), $user, $post,
+    $faker->text);
 
 switch ($argv[1]) {
     case 'user':
