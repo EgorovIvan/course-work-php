@@ -2,30 +2,24 @@
 
 namespace App\Blog;
 
+use JetBrains\PhpStorm\Pure;
+
 class Comment
 {
     public function __construct(
-        private int $id,
-        private User $author_id,
+        private UUID $uuid,
         private Post $post_id,
+        private User $author_id,
         private string $text
     )
     {}
 
     /**
-     * @return int
+     * @return UUID
      */
-    public function getId(): int
+    public function uuid(): UUID
     {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
+        return $this->uuid;
     }
 
     /**
@@ -60,7 +54,7 @@ class Comment
         $this->text = $text;
     }
 
-    public function __toString()
+    #[Pure] public function __toString()
     {
         return $this->getText();
     }

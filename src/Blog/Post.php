@@ -2,30 +2,23 @@
 
 namespace App\Blog;
 
+
 class Post
 {
     public function __construct(
-        private int $id,
+        private UUID $uuid,
         private User $author_id,
-        private string $header,
+        private string $title,
         private string $text
     )
     {}
 
     /**
-     * @return int
+     * @return UUID
      */
-    public function getId(): int
+    public function uuid(): UUID
     {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
+        return $this->uuid;
     }
 
     /**
@@ -39,17 +32,17 @@ class Post
     /**
      * @return string
      */
-    public function getHeader(): string
+    public function getTitle(): string
     {
-        return $this->header;
+        return $this->title;
     }
 
     /**
-     * @param string $header
+     * @param string $title
      */
-    public function setHeader(string $header): void
+    public function setTitle(string $title): void
     {
-        $this->header = $header;
+        $this->title = $title;
     }
 
     /**
@@ -70,6 +63,6 @@ class Post
 
     public function __toString()
     {
-        return $this->getHeader() . ' >>> ' . $this->getText();
+        return $this->getTitle() . ' >>> ' . $this->getText();
     }
 }

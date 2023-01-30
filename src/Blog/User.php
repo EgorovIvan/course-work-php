@@ -1,66 +1,53 @@
 <?php
 
+
 namespace App\Blog;
+
 
 class User
 {
     public function __construct(
-        private int $id,
-        private string $firstName,
-        private string $lastName
+        private UUID $uuid,
+        private string $username,
+        private Name $name
     )
     {}
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function __toString(): string
     {
-        return $this->id;
+        return "User $this->uuid with name $this->name and login $this->username";
     }
 
     /**
-     * @param int $id
+     * @return UUID
      */
-    public function setId(int $id): void
+    public function uuid(): UUID
     {
-        $this->id = $id;
+        return $this->uuid;
+    }
+
+
+    /**
+     * @param string $username
+     */
+    public function setLogin(string $username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return Name
+     */
+    public function name(): Name
+    {
+        return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getFirstName(): string
+    public function userName(): string
     {
-        return $this->firstName;
-    }
-
-    /**
-     * @param string $firstName
-     */
-    public function setFirstName(string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @param string $lastName
-     */
-    public function setLastName(string $lastName): void
-    {
-        $this->lastName = $lastName;
-    }
-
-    public function __toString()
-    {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->username;
     }
 }
