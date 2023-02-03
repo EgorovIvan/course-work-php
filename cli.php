@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use App\Blog\Exceptions\ArgumentsException;
 use App\Blog\Post;
 use App\Blog\Comment;
 use App\Blog\Name;
@@ -42,6 +43,7 @@ try {
     $command2->handle(Arguments::fromArgv($argv), $user);
 } catch (AppException $e) {
     echo "{$e->getMessage()}\n";
+} catch (ArgumentsException $e) {
 }
 
 

@@ -26,7 +26,6 @@ class User
         return $this->uuid;
     }
 
-
     /**
      * @param string $username
      */

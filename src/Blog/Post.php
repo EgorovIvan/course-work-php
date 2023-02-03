@@ -3,7 +3,7 @@
 namespace App\Blog;
 
 
-class Post
+class Post extends \App\Blog\User
 {
     public function __construct(
         private UUID $uuid,
