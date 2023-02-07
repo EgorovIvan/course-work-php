@@ -4,9 +4,7 @@
 namespace App\Blog\Exceptions;
 
 
-use Exception;
-
-class ArgumentsException extends Exception
+class ArgumentsException extends AppException
 {
 
 }

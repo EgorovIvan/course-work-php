@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Blog\UnitTests;
+namespace App\UnitTests\Blog;
 
 use App\Blog\Name;
 use App\Blog\User;

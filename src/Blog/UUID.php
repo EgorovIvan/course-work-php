@@ -5,8 +5,11 @@ namespace App\Blog;
 
 use App\Blog\Exceptions\InvalidArgumentException;
 
-class UUID extends \App\Blog\User
+class UUID extends User
 {
+    /**
+     * @throws \App\Blog\Exceptions\InvalidArgumentException
+     */
     public function __construct(
         private string $uuidString
     )
@@ -18,6 +21,9 @@ class UUID extends \App\Blog\User
         }
     }
 
+    /**
+     * @throws \App\Blog\Exceptions\InvalidArgumentException
+     */
     public static function random(): self
     {
         return new self(uuid_create(UUID_TYPE_RANDOM));

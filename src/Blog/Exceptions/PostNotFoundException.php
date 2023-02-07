@@ -3,9 +3,8 @@
 
 namespace App\Blog\Exceptions;
 
-use Exception;
 
-class PostNotFoundException extends Exception
+class PostNotFoundException extends AppException
 {
 
 }

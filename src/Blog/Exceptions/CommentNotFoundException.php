@@ -3,9 +3,8 @@
 
 namespace App\Blog\Exceptions;
 
-use Exception;
 
-class CommentNotFoundException extends Exception
+class CommentNotFoundException extends AppException
 {
 
 }

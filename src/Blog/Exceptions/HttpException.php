@@ -4,7 +4,7 @@
 namespace App\Blog\Exceptions;
 
 
-class CommandException extends AppException
+class HttpException extends AppException
 {
 
 }
