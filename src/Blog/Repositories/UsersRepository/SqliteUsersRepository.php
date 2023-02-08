@@ -40,7 +40,7 @@ class SqliteUsersRepository implements UsersRepositoryInterface
         $statement = $this->connection->prepare(
             'SELECT * FROM users WHERE uuid = ?'
         );
-        $statement->execute([(string)$uuid,]);
+        $statement->execute([(string)$uuid]);
         return $this->getUser($statement, $uuid);
     }
 

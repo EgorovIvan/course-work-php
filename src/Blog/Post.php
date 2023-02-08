@@ -3,7 +3,7 @@
 namespace App\Blog;
 
 
-class Post extends User
+class Post
 {
     public function __construct(
         private UUID $uuid,
@@ -12,6 +12,11 @@ class Post extends User
         private string $text
     )
     {}
+
+    public function __toString()
+    {
+        return $this->getTitle() . ' >>> ' . $this->getText();
+    }
 
     /**
      * @return UUID
@@ -59,10 +64,5 @@ class Post extends User
     public function setText(string $text): void
     {
         $this->text = $text;
-    }
-
-    public function __toString()
-    {
-        return $this->getTitle() . ' >>> ' . $this->getText();
     }
 }

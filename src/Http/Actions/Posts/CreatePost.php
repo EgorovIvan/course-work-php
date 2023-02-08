@@ -63,7 +63,8 @@ class CreatePost  implements ActionInterface
 // Возвращаем успешный ответ,
 // содержащий UUID новой статьи
         return new SuccessfulResponse([
-            'uuid' => (string)$newPostUuid,
+            'title' => $post->getTitle(),
+            'text' => $post->getText(),
         ]);
     }
 }
