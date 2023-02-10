@@ -3,43 +3,34 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Blog\Exceptions\AppException;
-use App\Blog\Repositories\CommentsRepository\SqliteCommentsRepository;
-use App\Blog\Repositories\PostsRepository\SqlitePostsRepository;
-use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use App\Http\Actions\Comments\CreateComment;
+use App\Http\Actions\Likes\CreateLike;
+use App\Http\Actions\Likes\CreateLikeForComments;
 use App\Http\Actions\Posts\CreatePost;
 use App\Http\Actions\Posts\FindByUuid;
+use App\Http\Actions\Users\CreateUser;
 use App\Http\Actions\Users\FindByUsername;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Blog\Exceptions\HttpException;
 
+// Подключаем файл bootstrap.php
+// и получаем настроенный контейнер
+$container = require __DIR__ . '/bootstrap.php';
 $request = new Request(
     $_GET,
     $_SERVER,
-// Читаем поток, содержащий тело запроса
     file_get_contents('php://input'),
 );
-
 try {
-// Пытаемся получить путь из запроса
     $path = $request->path();
 } catch (HttpException) {
-// Отправляем неудачный ответ,
-// если по какой-то причине
-// не можем получить путь
     (new ErrorResponse)->send();
-// Выходим из программы
     return;
 }
-
 try {
-// Пытаемся получить HTTP-метод запроса
     $method = $request->method();
 } catch (HttpException) {
-// Возвращаем неудачный ответ,
-// если по какой-то причине
-// не можем получить метод
     (new ErrorResponse)->send();
     return;
 }
@@ -49,57 +40,34 @@ $routes = [
 // для отделения маршрутов,
 // применяемых к запросам с разными методами
     'GET' => [
-        '/users/show' => new FindByUsername(
-            new SqliteUsersRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            )
-        ),
-        '/posts/show' => new FindByUuid(
-            new SqlitePostsRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            )
-        ),
+        '/users/show' => FindByUsername::class,
+        '/posts/show' => FindByUuid::class,
     ],
     'POST' => [
 // Добавили новый маршрут
-        '/posts/create' => new CreatePost(
-            new SqlitePostsRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            ),
-            new SqliteUsersRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            )
-        ),
-        '/posts/comment' => new CreateComment(
-            new SqliteCommentsRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            ),
-            new SqlitePostsRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            ),
-            new SqliteUsersRepository(
-                new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-            ),
-
-        ),
+        '/users/create' => CreateUser::class,
+        '/posts/create' => CreatePost::class,
+        '/posts/create_comment' => CreateComment::class,
+        '/posts/create_like' => CreateLike::class,
+        '/comments/create_like' => CreateLikeForComments::class,
     ],
 ];
 
-// Если у нас нет маршрута для пути из запроса -
-// отправляем неуспешный ответ
 if (!array_key_exists($method, $routes)) {
-    (new ErrorResponse('Not found'))->send();
+    (new ErrorResponse("Route not found: $method $path"))->send();
     return;
 }
-
-// Ищем маршрут среди маршрутов для этого метода
 if (!array_key_exists($path, $routes[$method])) {
-    (new ErrorResponse('Not found'))->send();
+    (new ErrorResponse("Route not found: $method $path"))->send();
     return;
 }
 
-// Выбираем действие по методу и пути
-$action = $routes[$method][$path];
+// Получаем имя класса действия для маршрута
+$actionClassName = $routes[$method][$path];
+
+// С помощью контейнера
+// создаём объект нужного действия
+$action = $container->get($actionClassName);
 
 try {
 // Пытаемся выполнить действие,

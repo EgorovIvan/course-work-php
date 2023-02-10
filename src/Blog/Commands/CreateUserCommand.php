@@ -19,7 +19,7 @@ class CreateUserCommand
 
     /**
      * @throws CommandException
-     * @throws \App\Blog\Exceptions\ArgumentsException
+     * @throws \App\Blog\Exceptions\ArgumentsException|\App\Blog\Exceptions\InvalidArgumentException
      */
     public function handle(Arguments $arguments): void
     {
