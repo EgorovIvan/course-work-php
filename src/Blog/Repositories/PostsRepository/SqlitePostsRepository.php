@@ -9,11 +9,13 @@ use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use App\Blog\Exceptions\PostNotFoundException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 class SqlitePostsRepository implements PostsRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     )
     {}
 
@@ -29,6 +31,9 @@ class SqlitePostsRepository implements PostsRepositoryInterface
             ':title' => $post->getTitle(),
             ':text' => $post->getText(),
         ]);
+
+        $postUuid = (string)$post->uuid();
+        $this->logger->info("Post saved: $postUuid");
     }
 
     /**
@@ -54,13 +59,17 @@ class SqlitePostsRepository implements PostsRepositoryInterface
     private function getPost(PDOStatement $statement, string $post): Post
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        $postUuid = new UUID($result['uuid']);
+
         if (false === $result) {
+            $this->logger->warning("Cannot find post: $postUuid");
             throw new PostNotFoundException(
                 "Cannot find post: $post"
             );
         }
 
-        $usersRepository = new SqliteUsersRepository($this->connection);
+        $usersRepository = new SqliteUsersRepository($this->connection, $this->logger);
 
         $user = $usersRepository->get(new UUID($result['author_id']));
 

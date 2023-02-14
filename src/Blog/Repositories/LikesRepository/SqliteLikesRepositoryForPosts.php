@@ -3,13 +3,16 @@
 
 namespace App\Blog\Repositories\LikesRepository;
 
+use App\Blog\Exceptions\PostNotFoundException;
 use App\Blog\Like;
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class SqliteLikesRepositoryForPosts implements LikesRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     )
     {}
 
@@ -24,6 +27,9 @@ class SqliteLikesRepositoryForPosts implements LikesRepositoryInterface
             ':post_id' => $like->getObjectId(),
             ':user_id' => $like->getUserId()
         ]);
+
+        $likeUuid = (string)$like->uuid();
+        $this->logger->info("Like saved: $likeUuid");
     }
 
     public function getByObjectUuid(string $post_id): array
@@ -33,6 +39,14 @@ class SqliteLikesRepositoryForPosts implements LikesRepositoryInterface
         );
         $statement->execute([$post_id]);
 
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($result === null) {
+            $this->logger->warning("Cannot find comment: $post_id");
+            throw new PostNotFoundException(
+                "Cannot find comment: $post_id"
+            );
+        }
+        return $result;
     }
 }

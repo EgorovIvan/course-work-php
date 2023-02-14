@@ -9,6 +9,7 @@ use App\Blog\Commands\CreateUserCommand;
 use App\Blog\Commands\DummyUsersRepository;
 use App\Blog\Exceptions\UserNotFoundException;
 use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
+use App\Blog\UnitTests\DummyLogger;
 use App\Blog\User;
 use App\Blog\UUID;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,8 @@ class CreateUserCommandTest extends TestCase
 // Создаём объект команды
 // У команды одна зависимость - UsersRepositoryInterface
         $command = new CreateUserCommand(
-            new DummyUsersRepository()
+            new DummyUsersRepository(),
+            new DummyLogger()
         );
 // здесь должна быть реализация UsersRepositoryInterface
 
@@ -65,7 +67,9 @@ class CreateUserCommandTest extends TestCase
     public function testItRequiresLastName(): void
     {
 // Передаём в конструктор команды объект, возвращаемый нашей функцией
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository(),
+            new DummyLogger()
+        );
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: last_name');
         $command->handle(new Arguments([
@@ -83,7 +87,8 @@ class CreateUserCommandTest extends TestCase
     public function testItRequiresFirstName(): void
     {
 // Вызываем ту же функцию
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository(),
+            new DummyLogger());
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: first_name');
         $command->handle(new Arguments(['username' => 'Ivan']));
@@ -128,7 +133,8 @@ class CreateUserCommandTest extends TestCase
             }
         };
 // Передаём наш мок в команду
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository,
+            new DummyLogger());
 // Запускаем команду
         $command->handle(new Arguments([
             'username' => 'Ivan',

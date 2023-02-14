@@ -4,17 +4,20 @@
 namespace App\Blog\Repositories\CommentsRepository;
 
 use App\Blog\Comment;
+use App\Blog\UnitTests\DummyLogger;
 use App\Blog\UUID;
 use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use App\Blog\Repositories\PostsRepository\SqlitePostsRepository;
 use App\Blog\Exceptions\CommentNotFoundException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 class SqliteCommentsRepository implements CommentsRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     )
     {}
 
@@ -30,6 +33,9 @@ class SqliteCommentsRepository implements CommentsRepositoryInterface
             ':author_id' => $comment->getAuthorId()->uuid(),
             ':text' => $comment->getText(),
         ]);
+
+        $commentUuid = (string)$comment->uuid();
+        $this->logger->info("Comment saved: $commentUuid");
     }
 
     /**
@@ -57,14 +63,18 @@ class SqliteCommentsRepository implements CommentsRepositoryInterface
     private function getComment(PDOStatement $statement, string $comment): Comment
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        $commentUuid = new UUID($result['uuid']);
+
         if (false === $result) {
+            $this->logger->warning("Cannot find comment: $commentUuid");
             throw new CommentNotFoundException(
                 "Cannot find comment: $comment"
             );
         }
 
-        $postsRepository = new SqlitePostsRepository($this->connection);
-        $usersRepository = new SqliteUsersRepository($this->connection);
+        $postsRepository = new SqlitePostsRepository($this->connection, $this->logger);
+        $usersRepository = new SqliteUsersRepository($this->connection, $this->logger);
 
         $post = $postsRepository->get(new UUID($result['post_id']));
         $user = $usersRepository->get(new UUID($result['author_id']));

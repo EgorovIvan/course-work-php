@@ -9,11 +9,13 @@ use App\Blog\UUID;
 use App\Blog\Exceptions\UserNotFoundException;
 use PDO;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 class SqliteUsersRepository implements UsersRepositoryInterface
 {
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     )
     {
     }
@@ -30,6 +32,9 @@ class SqliteUsersRepository implements UsersRepositoryInterface
             ':first_name' => $user->name()->first(),
             ':last_name' => $user->name()->last()
         ]);
+
+        $userUuid = (string)$user->uuid();
+        $this->logger->info("User data saved: $userUuid");
     }
 
     /**
@@ -41,6 +46,7 @@ class SqliteUsersRepository implements UsersRepositoryInterface
             'SELECT * FROM users WHERE uuid = ?'
         );
         $statement->execute([(string)$uuid]);
+
         return $this->getUser($statement, $uuid);
     }
 
@@ -64,14 +70,18 @@ class SqliteUsersRepository implements UsersRepositoryInterface
     private function getUser(PDOStatement $statement, string $username): User
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        $userUuid = new UUID($result['uuid']);
+        file_put_contents('C:\Project\Geekbrains\PHP2\log2.txt', print_r($result, true));
         if (false === $result) {
+            $this->logger->warning("Cannot find user: $userUuid");
             throw new UserNotFoundException(
                 "Cannot find user: $username"
             );
         }
 
         return new User(
-            new UUID($result['uuid']),
+            $userUuid,
             $result['username'],
             new Name($result['first_name'], $result['last_name']),
         );

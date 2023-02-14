@@ -5,6 +5,7 @@ namespace App\Blog\Repositories\UnitTests\PostsRepository;
 
 
 
+use App\Blog\UnitTests\DummyLogger;
 use App\Blog\User;
 use App\Blog\Post;
 use App\Blog\Name;
@@ -33,7 +34,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 
-        $repository = new SqlitePostsRepository($connectionStub);
+        $repository = new SqlitePostsRepository($connectionStub, new DummyLogger());
 
         $user = new User(
             new UUID('123e4567-e89b-12d3-a456-426614174000'),
@@ -75,7 +76,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 
-        $repository = new SqlitePostsRepository($connectionStub);
+        $repository = new SqlitePostsRepository($connectionStub, new DummyLogger());
 
          $post = $repository->get(new UUID('919c66d0-1db8-4b64-8393-6dac614f8269'));
 
@@ -97,7 +98,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementStub);
 
-        $repository = new SqlitePostsRepository($connectionStub);
+        $repository = new SqlitePostsRepository($connectionStub, new DummyLogger());
 
         $this->expectException(PostNotFoundException::class);
 

@@ -3,6 +3,7 @@
 
 namespace App\Blog\Repositories\UnitTests\UsersRepository;
 
+use App\Blog\UnitTests\DummyLogger;
 use App\Blog\User;
 use App\Blog\Name;
 use App\Blog\UUID;
@@ -31,12 +32,12 @@ class SqliteUsersRepositoryTest extends TestCase
 // стаб запроса - при вызове метода prepare
         $connectionStub->method('prepare')->willReturn($statementStub);
 // 1. Передаём в репозиторий стаб подключения
-        $repository = new SqliteUsersRepository($connectionStub);
+        $repository = new SqliteUsersRepository($connectionStub, new DummyLogger());
 // Ожидаем, что будет брошено исключение
         $this->expectException(UserNotFoundException::class);
-        $this->expectExceptionMessage('Cannot find user: Ivan');
+        $this->expectExceptionMessage('Cannot find user: ivan123');
 // Вызываем метод получения пользователя
-        $repository->getByUsername('Ivan');
+        $repository->getByUsername('ivan123');
     }
 
     // Тест, проверяющий, что репозиторий сохраняет данные в БД
@@ -61,7 +62,7 @@ class SqliteUsersRepositoryTest extends TestCase
 // возвращает мок запроса
         $connectionStub->method('prepare')->willReturn($statementMock);
 // 1. Передаём в репозиторий стаб подключения
-        $repository = new SqliteUsersRepository($connectionStub);
+        $repository = new SqliteUsersRepository($connectionStub, new DummyLogger());
 // Вызываем метод сохранения пользователя
         $repository->save(
             new User( // Свойства пользователя точно такие,

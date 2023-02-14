@@ -8,12 +8,14 @@ use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
 use App\Blog\User;
 use App\Blog\UUID;
 use App\Blog\Exceptions\CommandException;
+use Psr\Log\LoggerInterface;
 
 
 class CreateUserCommand
 {
     public function __construct(
-        private UsersRepositoryInterface $usersRepository
+        private UsersRepositoryInterface $usersRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -23,15 +25,30 @@ class CreateUserCommand
      */
     public function handle(Arguments $arguments): void
     {
+        // Логируем информацию о том, что команда запущена
+// Уровень логирования – INFO
+        $this->logger->info("Create user command started");
+
         $username = $arguments->get('username');
+
         if ($this->userExists($username)) {
+            // Логируем сообщение с уровнем WARNING
+//            $this->logger->warning("User already exists: $username");
+            // Вместо выбрасывания исключения просто выходим из функции
+//            return;
             throw new CommandException("User already exists: $username");
         }
+
+        $newUserUuid = UUID::random();
+
         $this->usersRepository->save(new User(
-            UUID::random(),
+            $newUserUuid,
             $username,
             new Name($arguments->get('first_name'), $arguments->get('last_name'))
         ));
+
+        // Логируем информацию о новом пользователе
+        $this->logger->info("User created: $newUserUuid");
     }
     private function userExists(string $username): bool
     {
