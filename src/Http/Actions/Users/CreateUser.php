@@ -34,11 +34,6 @@ class CreateUser  implements ActionInterface
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());
         }
-//        try {
-//            $username = $this->usersRepository->getByUsername($username);
-//        } catch (UserNotFoundException $e) {
-//            return new ErrorResponse($e->getMessage());
-//        }
 
         $newUserUuid = UUID::random();
 

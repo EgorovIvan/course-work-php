@@ -5,11 +5,10 @@ namespace App\Blog\Repositories\LikesRepository;
 
 use App\Blog\Exceptions\CommentNotFoundException;
 use App\Blog\Like;
-use App\Blog\UUID;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-class SqliteLikesRepositoryForComments implements LikesRepositoryInterface
+class SqliteLikesRepositoryForComments implements LikesRepositoryForCommentsInterface
 {
     public function __construct(
         private PDO $connection,

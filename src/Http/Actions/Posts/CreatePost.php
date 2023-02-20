@@ -4,30 +4,25 @@
 namespace App\Http\Actions\Posts;
 
 
+use App\Blog\Exceptions\AuthException;
 use App\Blog\Exceptions\HttpException;
-use App\Blog\Exceptions\InvalidArgumentException;
-use App\Blog\Exceptions\UserNotFoundException;
 use App\Blog\Post;
 use App\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
-use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
 use App\Blog\UUID;
 use App\Http\Actions\ActionInterface;
-use App\Http\Auth\IdentificationInterface;
+use App\Http\Auth\PasswordAuthenticationInterface;
+use App\Http\Auth\TokenAuthenticationInterface;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\ErrorResponse;
 use App\Http\SuccessfulResponse;
 use Psr\Log\LoggerInterface;
 
-class CreatePost  implements ActionInterface
+class CreatePost implements ActionInterface
 {
-    // Внедряем репозитории статей и пользователей
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
-        // Вместо контракта репозитория пользователей
-// внедряем контракт идентификации
-        private IdentificationInterface $identification,
-        // Внедряем контракт логгера
+        private TokenAuthenticationInterface $tokenAuthentication,
         private LoggerInterface $logger,
     ) {
     }
@@ -37,9 +32,13 @@ class CreatePost  implements ActionInterface
      */
     public function handle(Request $request): Response
     {
-        // Идентифицируем пользователя -
-        // автора статьи
-        $author = $this->identification->user($request);
+        try {
+            $author = $this->tokenAuthentication->user($request);
+
+        } catch (AuthException $e) {
+
+            return new ErrorResponse($e->getMessage());
+        }
 
         // Генерируем UUID для новой статьи
         $newPostUuid = UUID::random();

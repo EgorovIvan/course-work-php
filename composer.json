@@ -1,34 +1,34 @@
 {
-  "name": "ivan-egorov/course-work-php",
-  "autoload": {
-    "psr-4": {
-      "App\\": "src/"
+    "name": "ivan-egorov/course-work-php",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Blog\\UnitTests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "IvanE",
+            "email": "sportsmenq@mail.ru"
+        }
+    ],
+    "scripts": {
+        "test": "phpunit tests --testdox --colors"
+    },
+    "require": {
+        "fakerphp/faker": "^1.21",
+        "ext-pdo": "*",
+        "symfony/polyfill-uuid": "^1.27",
+        "ext-mbstring": "*",
+        "psr/container": "^2.0",
+        "monolog/monolog": "^3.3",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "App\\Blog\\UnitTests\\": "tests/"
-    }
-  },
-  "scripts": {
-    "test": "phpunit tests --testdox --colors"
-  },
-  "authors": [
-    {
-      "name": "EgorovIvan",
-      "email": "sportsmenq@mail.ru"
-    }
-  ],
-  "require": {
-    "fakerphp/faker": "^1.21",
-    "ext-pdo": "*",
-    "symfony/polyfill-uuid": "^1.27",
-    "ext-mbstring": "*",
-    "psr/container": "^2.0",
-    "monolog/monolog": "^3.3",
-    "vlucas/phpdotenv": "^5.5"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9.5"
-  }
 }

@@ -3,6 +3,8 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Blog\Exceptions\AppException;
+use App\Http\Actions\Auth\LogIn;
+use App\Http\Actions\Auth\LogOut;
 use App\Http\Actions\Comments\CreateComment;
 use App\Http\Actions\Likes\CreateLike;
 use App\Http\Actions\Likes\CreateLikeForComments;
@@ -53,7 +55,8 @@ $routes = [
         '/posts/show' => FindByUuid::class,
     ],
     'POST' => [
-// Добавили новый маршрут
+        '/login' => LogIn::class,
+        '/logout' => LogOut::class,
         '/users/create' => CreateUser::class,
         '/posts/create' => CreatePost::class,
         '/posts/create_comment' => CreateComment::class,

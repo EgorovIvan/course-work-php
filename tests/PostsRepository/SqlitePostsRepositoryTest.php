@@ -4,7 +4,6 @@
 namespace App\Blog\Repositories\UnitTests\PostsRepository;
 
 
-
 use App\Blog\UnitTests\DummyLogger;
 use App\Blog\User;
 use App\Blog\Post;
@@ -39,7 +38,11 @@ class SqlitePostsRepositoryTest extends TestCase
         $user = new User(
             new UUID('123e4567-e89b-12d3-a456-426614174000'),
             'ivan123',
-            new Name('Ivan', 'Nikitin')
+            'some_password',
+            new Name(
+                'Ivan',
+                'Nikitin'
+            )
         );
 
         $repository->save(
@@ -64,12 +67,12 @@ class SqlitePostsRepositoryTest extends TestCase
         $statementMock = $this->createMock(\PDOStatement::class);
 
         $statementMock->method('fetch')->willReturn([
-            'uuid' => '919c66d0-1db8-4b64-8393-6dac614f8269',
+            'uuid' => new UUID('919c66d0-1db8-4b64-8393-6dac614f8269'),
             'author_id' => new UUID('123e4567-e89b-12d3-a456-426614174000'),
             'title' => 'title',
             'text' => 'text',
-
             'username' => 'ivan123',
+            'password' => 'password123',
             'first_name' => 'Ivan',
             'last_name' => 'Nikitin',
         ]);

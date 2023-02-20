@@ -8,9 +8,9 @@ use JsonException;
 class Request
 {
     public function __construct(
-// аргумент, соответствующий суперглобальной переменной $_GET
+        // аргумент, соответствующий суперглобальной переменной $_GET
         private array $get,
-// аргумент, соответствующий суперглобальной переменной $_SERVER
+        // аргумент, соответствующий суперглобальной переменной $_SERVER
         private array $server,
         // Добавляем свойство для хранения тела запроса
         private string $body
@@ -22,10 +22,10 @@ class Request
      */
     public function method(): string
     {
-// В суперглобальном массиве $_SERVER
-// HTTP-метод хранится под ключом REQUEST_METHOD
+        // В суперглобальном массиве $_SERVER
+        // HTTP-метод хранится под ключом REQUEST_METHOD
         if (!array_key_exists('REQUEST_METHOD', $this->server)) {
-// Если мы не можем получить метод - бросаем исключение
+            // Если мы не можем получить метод - бросаем исключение
             throw new HttpException('Cannot get method from the request');
         }
         return $this->server['REQUEST_METHOD'];
@@ -55,6 +55,9 @@ class Request
     }
 // Метод для получения отдельного поля
 // из json-форматированного тела запроса
+    /**
+     * @throws HttpException
+     */
     public function jsonBodyField(string $field): mixed
     {
         $data = $this->jsonBody();

@@ -5,15 +5,15 @@ namespace App\Http\Actions\Comments;
 
 
 use App\Blog\Comment;
+use App\Blog\Exceptions\AuthException;
 use App\Blog\Exceptions\HttpException;
 use App\Blog\Exceptions\InvalidArgumentException;
 use App\Blog\Exceptions\PostNotFoundException;
-use App\Blog\Exceptions\UserNotFoundException;
 use App\Blog\Repositories\CommentsRepository\CommentsRepositoryInterface;
 use App\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
-use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
 use App\Blog\UUID;
 use App\Http\Actions\ActionInterface;
+use App\Http\Auth\PasswordAuthenticationInterface;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
@@ -24,7 +24,7 @@ class CreateComment implements ActionInterface
     public function __construct(
         private CommentsRepositoryInterface $commentsRepository,
         private PostsRepositoryInterface $postsRepository,
-        private UsersRepositoryInterface $usersRepository,
+        private PasswordAuthenticationInterface $passwordAuthentication,
     ) {
     }
 
@@ -33,6 +33,7 @@ class CreateComment implements ActionInterface
      */
     public function handle(Request $request): Response
     {
+
         try {
             $postId = new UUID($request->jsonBodyField('post_id'));
         } catch (HttpException | InvalidArgumentException $e) {
@@ -46,14 +47,8 @@ class CreateComment implements ActionInterface
         }
 
         try {
-            $authorId = new UUID($request->jsonBodyField('author_id'));
-        } catch (HttpException | InvalidArgumentException $e) {
-            return new ErrorResponse($e->getMessage());
-        }
-
-        try {
-            $user = $this->usersRepository->get($authorId);
-        } catch (UserNotFoundException $e) {
+            $author = $this->passwordAuthentication->user($request);
+        } catch (AuthException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
@@ -63,7 +58,7 @@ class CreateComment implements ActionInterface
             $comment = new Comment(
                 $newCommentUuid,
                 $post,
-                $user,
+                $author,
                 $request->jsonBodyField('text'),
             );
         } catch (HttpException $e) {

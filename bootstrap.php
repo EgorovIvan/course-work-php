@@ -1,24 +1,31 @@
 <?php
 
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 use App\Blog\Container\DIContainer;
+use App\Blog\Repositories\AuthTokensRepository\AuthTokensRepositoryInterface;
+use App\Blog\Repositories\AuthTokensRepository\SqliteAuthTokensRepository;
 use App\Blog\Repositories\CommentsRepository\CommentsRepositoryInterface;
 use App\Blog\Repositories\CommentsRepository\SqliteCommentsRepository;
-use App\Blog\Repositories\LikesRepository\LikesRepositoryInterface;
+use App\Blog\Repositories\LikesRepository\LikesRepositoryForCommentsInterface;
+use App\Blog\Repositories\LikesRepository\LikesRepositoryForPostsInterface;
 use App\Blog\Repositories\LikesRepository\SqliteLikesRepositoryForComments;
 use App\Blog\Repositories\LikesRepository\SqliteLikesRepositoryForPosts;
 use App\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
 use App\Blog\Repositories\PostsRepository\SqlitePostsRepository;
 use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
-use App\Http\Auth\IdentificationInterface;
+use App\Http\Actions\Auth\BearerTokenAuthentication;
+use App\Http\Auth\AuthenticationInterface;
 use App\Http\Auth\JsonBodyUuidIdentification;
+use App\Http\Auth\PasswordAuthentication;
+use App\Http\Auth\PasswordAuthenticationInterface;
+use App\Http\Auth\TokenAuthenticationInterface;
 use Dotenv\Dotenv;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Загружаем переменные окружения из файла .env
 Dotenv::createImmutable(__DIR__)->safeLoad();
@@ -30,7 +37,7 @@ $container = new DIContainer();
 $container->bind(
     PDO::class,
     // Берём путь до файла базы данных SQLite
-// из переменной окружения SQLITE_DB_PATH
+    // из переменной окружения SQLITE_DB_PATH
     new PDO('sqlite:' . __DIR__ . '/' . $_SERVER['SQLITE_DB_PATH'])
 );
 // 2. репозиторий статей
@@ -50,12 +57,12 @@ $container->bind(
 );
 // 5. репозиторий лайков для постов
 $container->bind(
-    LikesRepositoryInterface::class,
+    LikesRepositoryForPostsInterface::class,
     SqliteLikesRepositoryForPosts::class
 );
 // 6. репозиторий лайков для комментариев
 $container->bind(
-    LikesRepositoryInterface::class,
+    LikesRepositoryForCommentsInterface::class,
     SqliteLikesRepositoryForComments::class
 );
 
@@ -91,10 +98,24 @@ $container->bind(
 );
 
 $container->bind(
-    IdentificationInterface::class,
+    AuthenticationInterface::class,
     JsonBodyUuidIdentification::class
 );
 
+$container->bind(
+    PasswordAuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+
+$container->bind(
+    TokenAuthenticationInterface::class,
+    BearerTokenAuthentication::class
+);
+
+$container->bind(
+    AuthTokensRepositoryInterface::class,
+    SqliteAuthTokensRepository::class
+);
 
 
 // Возвращаем объект контейнера

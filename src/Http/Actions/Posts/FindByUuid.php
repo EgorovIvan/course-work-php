@@ -25,24 +25,24 @@ class FindByUuid implements ActionInterface
     public function handle(Request $request): Response
     {
         try {
-// Пытаемся получить искомое имя пользователя из запроса
+            // Пытаемся получить искомое имя пользователя из запроса
             $uuid = $request->query('uuid');
         } catch (HttpException $e) {
-// Если в запросе нет параметра username -
-// возвращаем неуспешный ответ,
-// сообщение об ошибке берём из описания исключения
+            // Если в запросе нет параметра username -
+            // возвращаем неуспешный ответ,
+            // сообщение об ошибке берём из описания исключения
             return new ErrorResponse($e->getMessage());
         }
         try {
-// Пытаемся найти пользователя в репозитории
+            // Пытаемся найти пользователя в репозитории
             $post = $this->postsRepository->get(new UUID($uuid));
         } catch (PostNotFoundException $e) {
-// Если пользователь не найден -
-// возвращаем неуспешный ответ
+            // Если пользователь не найден -
+            // возвращаем неуспешный ответ
             return new ErrorResponse($e->getMessage());
         } catch (InvalidArgumentException $e) {
         }
-// Возвращаем успешный ответ
+        // Возвращаем успешный ответ
         return new SuccessfulResponse([
             'uuid' => $uuid,
             'title' => $post->getTitle(),

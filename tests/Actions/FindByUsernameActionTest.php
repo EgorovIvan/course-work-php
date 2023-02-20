@@ -81,6 +81,7 @@ class FindByUsernameActionTest extends TestCase
             new User(
                 UUID::random(),
                 'ivan',
+                '1234',
                 new Name('Ivan', 'Nikitin')
             ),
         ]);

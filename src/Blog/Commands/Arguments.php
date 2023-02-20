@@ -11,17 +11,17 @@ final class Arguments
     public function __construct(iterable $arguments)
     {
         foreach ($arguments as $argument => $value) {
-// Приводим к строкам
+            // Приводим к строкам
             $stringValue = trim((string)$value);
-// Пропускаем пустые значения
+            // Пропускаем пустые значения
             if (empty($stringValue)) {
                 continue;
             }
-// Также приводим к строкам ключ
+            // Также приводим к строкам ключ
             $this->arguments[(string)$argument] = $stringValue;
         }
     }
-// Переносим сюда логику разбора аргументов командной строки
+    // Переносим сюда логику разбора аргументов командной строки
     public static function fromArgv(array $argv): self
     {
         $arguments = [];
