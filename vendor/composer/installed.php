@@ -3,7 +3,7 @@
         'name' => 'ivan-egorov/course-work-php',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '499f074012427f270df983df5b2cfdc11752c202',
+        'reference' => '6f0bd07675906324295169bdf47c8aae825a82c0',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'ivan-egorov/course-work-php' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '499f074012427f270df983df5b2cfdc11752c202',
+            'reference' => '6f0bd07675906324295169bdf47c8aae825a82c0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

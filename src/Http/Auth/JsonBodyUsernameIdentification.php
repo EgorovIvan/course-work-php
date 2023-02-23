@@ -11,7 +11,7 @@ use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
 use App\Http\Request;
 use App\Blog\User;
 
-class JsonBodyUsernameIdentification implements IdentificationInterface
+class JsonBodyUsernameIdentification implements AuthenticationInterface
 {
     public function __construct(
         private UsersRepositoryInterface $usersRepository

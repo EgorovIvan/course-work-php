@@ -23,14 +23,15 @@ class SqliteUsersRepository implements UsersRepositoryInterface
     public function save(User $user): void
     {
         $statement = $this->connection->prepare(
-            'INSERT INTO users (uuid, username, first_name, last_name)
-                    VALUES (:uuid, :username, :first_name, :last_name)'
+            'INSERT INTO users (uuid, username, password, first_name, last_name)
+                    VALUES (:uuid, :username, :password, :first_name, :last_name)'
         );
         $statement->execute([
-            'uuid' => (string)$user->uuid(),
-            'username' => $user->userName(),
+            ':uuid' => (string)$user->uuid(),
+            ':username' => $user->userName(),
+            ':password' => $user->hashedPassword(),
             ':first_name' => $user->name()->first(),
-            ':last_name' => $user->name()->last()
+            ':last_name' => $user->name()->last(),
         ]);
 
         $userUuid = (string)$user->uuid();
@@ -71,19 +72,20 @@ class SqliteUsersRepository implements UsersRepositoryInterface
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        $userUuid = new UUID($result['uuid']);
-        file_put_contents('C:\Project\Geekbrains\PHP2\log2.txt', print_r($result, true));
-        if (false === $result) {
-            $this->logger->warning("Cannot find user: $userUuid");
+        if ($result === false) {
+            $this->logger->warning("Cannot find user: $username");
             throw new UserNotFoundException(
                 "Cannot find user: $username"
             );
         }
 
         return new User(
-            $userUuid,
-            $result['username'],
-            new Name($result['first_name'], $result['last_name']),
+            new UUID($result['uuid']),
+            (string)$result['username'],
+            (string)$result['password'],
+            new Name(
+                $result['first_name'],
+                $result['last_name']),
         );
     }
 }

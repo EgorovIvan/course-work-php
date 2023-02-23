@@ -13,7 +13,7 @@ use App\Blog\UUID;
 use App\Http\Request;
 use App\Blog\User;
 
-class JsonBodyUuidIdentification implements IdentificationInterface
+class JsonBodyUuidIdentification implements AuthenticationInterface
 {
     public function __construct(
         private UsersRepositoryInterface $usersRepository

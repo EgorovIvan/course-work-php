@@ -64,6 +64,7 @@ class UserTest extends TestCase
         return new User(
             new UUID('123e4567-e89b-12d3-a456-426614174000'),
             'ivan123',
+            '1234',
             new Name('Ivan', 'Nikitin')
         );
     }

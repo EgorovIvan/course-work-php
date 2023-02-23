@@ -60,12 +60,10 @@ class SqlitePostsRepository implements PostsRepositoryInterface
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        $postUuid = new UUID($result['uuid']);
-
-        if (false === $result) {
-            $this->logger->warning("Cannot find post: $postUuid");
+        if ($result === false) {
+            $this->logger->warning("Cannot find post: $post");
             throw new PostNotFoundException(
-                "Cannot find post: $post"
+                "Cannot find post: $post}"
             );
         }
 

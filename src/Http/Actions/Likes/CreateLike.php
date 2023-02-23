@@ -3,16 +3,16 @@
 
 namespace App\Http\Actions\Likes;
 
+use App\Blog\Exceptions\AuthException;
 use App\Blog\Exceptions\HttpException;
 use App\Blog\Exceptions\InvalidArgumentException;
 use App\Blog\Exceptions\PostNotFoundException;
-use App\Blog\Exceptions\UserNotFoundException;
 use App\Blog\Like;
-use App\Blog\Repositories\LikesRepository\LikesRepositoryInterface;
+use App\Blog\Repositories\LikesRepository\LikesRepositoryForPostsInterface;
 use App\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
-use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
 use App\Blog\UUID;
 use App\Http\Actions\ActionInterface;
+use App\Http\Auth\PasswordAuthenticationInterface;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\Response;
@@ -21,9 +21,9 @@ use App\Http\SuccessfulResponse;
 class CreateLike implements ActionInterface
 {
     public function __construct(
-        private LikesRepositoryInterface $likesRepository,
+        private LikesRepositoryForPostsInterface $likesRepository,
         private PostsRepositoryInterface $postsRepository,
-        private UsersRepositoryInterface $usersRepository,
+        private PasswordAuthenticationInterface $passwordAuthentication,
     ) {
     }
 
@@ -46,18 +46,13 @@ class CreateLike implements ActionInterface
         }
 
         try {
-            $userId = new UUID($request->jsonBodyField('user_id'));
-        } catch (HttpException | InvalidArgumentException $e) {
-            return new ErrorResponse($e->getMessage());
-        }
-
-        try {
-            $user = $this->usersRepository->get($userId);
-        } catch (UserNotFoundException $e) {
+            $author = $this->passwordAuthentication->user($request);
+        } catch (AuthException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
         $postLikes = $this->likesRepository->getByObjectUuid($postId);
+        $userId = $author->uuid();
 
         foreach ($postLikes as $post)
         {
@@ -72,7 +67,7 @@ class CreateLike implements ActionInterface
             $like = new Like(
                 $newLikeUuid,
                 $postId,
-                $userId,
+                (string)$userId,
             );
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());

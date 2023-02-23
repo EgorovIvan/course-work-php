@@ -15,7 +15,8 @@ use App\Blog\Post;
 use App\Http\Actions\Posts\CreatePost;
 use App\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
 use App\Blog\Repositories\UsersRepository\UsersRepositoryInterface;
-use App\Http\Auth\IdentificationInterface;
+use App\Http\Auth\AuthenticationInterface;
+use App\Http\Auth\TokenAuthenticationInterface;
 use App\Http\ErrorResponse;
 use App\Http\Request;
 use App\Http\SuccessfulResponse;
@@ -53,13 +54,13 @@ class CreatePostActionTest extends TestCase
             }
         };
     }
-    private function identification(UsersRepositoryInterface $usersRepository): IdentificationInterface
+    private function identification(): TokenAuthenticationInterface
     {
-        return new class($usersRepository) implements IdentificationInterface {
+        return new class() implements TokenAuthenticationInterface {
             public function __construct(
-                private UsersRepositoryInterface $usersRepository
             )
             {
+
             }
 
             public function user(Request $request): User
@@ -131,7 +132,7 @@ class CreatePostActionTest extends TestCase
 
 //        $usersRepository = $this->usersRepository([]);
         $postsRepository = $this->postsRepository();
-        $identification = $this->identification([]);
+        $identification = $this->identification();
 
         $action = new CreatePost($postsRepository, $identification, new DummyLogger());
 
@@ -161,6 +162,7 @@ class CreatePostActionTest extends TestCase
             new User(
                 new UUID('3b919225-1657-4f14-bba7-ed02a639d6dc'),
                 'username',
+                'password',
                 new Name('name', 'surname'),
             ),
         ]);
@@ -211,16 +213,14 @@ class CreatePostActionTest extends TestCase
         $connectionStub->method('prepare')->willReturn($statementMock);
 
 //        $repository = new SqliteUsersRepository($connectionStub, new DummyLogger());
-        $identification = $this->identification([]);
+        $identification = $this->identification();
 //        $newUser = $repository->get(new UUID('0b8818b7-537c-4ad0-8b4b-3de9bfe10fcc'));
 
-        $request = new Request([], [], '{
-            "author_id":"0b8818b7-537c-4ad0-8b4b-3de9bfe10fcc",
-            "text": "some text"
-            }');
+        $request = new Request([], [], '{}');
 
-        $newUser = $identification->user($request);
+//        $newUser = $identification->user($request);
 //        $authorId = new UUID($request->jsonBodyField('author_id'));
+//        $header = $request->header('Authorization');
 
         $postsRepository = $this->postsRepository();
         $action = new CreatePost($postsRepository, $identification, new DummyLogger());

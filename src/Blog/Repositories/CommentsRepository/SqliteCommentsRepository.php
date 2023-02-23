@@ -4,7 +4,6 @@
 namespace App\Blog\Repositories\CommentsRepository;
 
 use App\Blog\Comment;
-use App\Blog\UnitTests\DummyLogger;
 use App\Blog\UUID;
 use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
 use App\Blog\Repositories\PostsRepository\SqlitePostsRepository;
@@ -64,10 +63,8 @@ class SqliteCommentsRepository implements CommentsRepositoryInterface
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        $commentUuid = new UUID($result['uuid']);
-
         if (false === $result) {
-            $this->logger->warning("Cannot find comment: $commentUuid");
+            $this->logger->warning("Cannot find comment: $comment");
             throw new CommentNotFoundException(
                 "Cannot find comment: $comment"
             );

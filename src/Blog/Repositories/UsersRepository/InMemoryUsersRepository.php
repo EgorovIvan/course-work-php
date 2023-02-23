@@ -15,6 +15,9 @@ class InMemoryUsersRepository implements UsersRepositoryInterface
         $this->users[] = $user;
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function get(UUID $uuid): User
     {
         foreach ($this->users as $user) {
@@ -24,6 +27,10 @@ class InMemoryUsersRepository implements UsersRepositoryInterface
         }
         throw new UserNotFoundException("User not found: $uuid");
     }
+
+    /**
+     * @throws UserNotFoundException
+     */
     public function getByUsername(string $username): User
     {
         foreach ($this->users as $user) {

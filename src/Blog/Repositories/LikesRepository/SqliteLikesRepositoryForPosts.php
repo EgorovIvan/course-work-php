@@ -8,7 +8,7 @@ use App\Blog\Like;
 use PDO;
 use Psr\Log\LoggerInterface;
 
-class SqliteLikesRepositoryForPosts implements LikesRepositoryInterface
+class SqliteLikesRepositoryForPosts implements LikesRepositoryForPostsInterface
 {
     public function __construct(
         private PDO $connection,
@@ -32,6 +32,9 @@ class SqliteLikesRepositoryForPosts implements LikesRepositoryInterface
         $this->logger->info("Like saved: $likeUuid");
     }
 
+    /**
+     * @throws PostNotFoundException
+     */
     public function getByObjectUuid(string $post_id): array
     {
         $statement = $this->connection->prepare(
