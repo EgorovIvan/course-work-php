@@ -1,19 +1,12 @@
 # See https://github.com/EgorovIvan/course-work-php for more about ignoring files.
 
 # dependencies
-<<<<<<< HEAD
 /vendor/*
 
 # logger
 /logs/*
-=======
-/vendor
-
-# logger
-/logs
->>>>>>> parent of d92feaa (fix gitignore)
 *.log
 
-/.phpunit.result.cache
-/.idea
-/composer.phar
+.phpunit.result.cache
+.idea
+composer.phar
