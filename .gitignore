@@ -1,10 +1,10 @@
 # See https://github.com/EgorovIvan/course-work-php for more about ignoring files.
 
 # dependencies
-vendor/
+/vendor/*
 
 # logger
-logs/
+/logs/*
 *.log
 
 .phpunit.result.cache
