@@ -3,7 +3,6 @@
 
 namespace App\Blog\Repositories\PostsRepository;
 
-use App\Blog\Exceptions\PostsRepositoryException;
 use App\Blog\Post;
 use App\Blog\UUID;
 use App\Blog\Repositories\UsersRepository\SqliteUsersRepository;
@@ -79,22 +78,4 @@ class SqlitePostsRepository implements PostsRepositoryInterface
             $result['text']
         );
     }
-
-    /**
-     * @throws PostsRepositoryException
-     */
-    public function delete(UUID $uuid): void
-    {
-        try {
-            $statement = $this->connection->prepare(
-                'DELETE FROM posts WHERE uuid = ?'
-            );
-            $statement->execute([(string)$uuid]);
-        } catch (\PDOException $e) {
-            throw new PostsRepositoryException(
-                $e->getMessage(), (int)$e->getCode(), $e
-            );
-        }
-    }
-
 }

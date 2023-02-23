@@ -5,7 +5,7 @@ namespace App\Blog;
 
 use App\Blog\Exceptions\InvalidArgumentException;
 
-class UUID extends \App\Blog\User
+class UUID
 {
     /**
      * @throws \App\Blog\Exceptions\InvalidArgumentException

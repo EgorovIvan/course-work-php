@@ -4,7 +4,7 @@ namespace App\Blog;
 
 use JetBrains\PhpStorm\Pure;
 
-class Comment extends \App\Blog\Post
+class Comment
 {
     public function __construct(
         private UUID $uuid,
